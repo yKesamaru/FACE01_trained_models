@@ -40,7 +40,7 @@ ___
 
 ## 導入
 
-顔認識技術は、スマートフォンのロック解除から空港のシステムまで、私たちの生活のあらゆる面で使用されています。しかし、OSSの既存顔認識モデル、特に`dlib_face_recognition_resnet_model_v1.dat`は、白人の顔に対する精度は高いものの、それ以外の人種、特に日本人の顔に対する精度が低いという問題があります。
+顔認識技術は、スマートフォンのロック解除から空港のシステムまで、私たちの生活のあらゆる面で使用されています。しかしOSSの既存顔認識モデルである`dlib_face_recognition_resnet_model_v1.dat`は、白人の顔に対する精度は高いものの、それ以外の人種、特に日本人の顔に対する精度が低いという問題があります。
 
 この問題を解決するために、この記事では日本人専用の顔認識システム用学習モデルの開発について説明します。効率的な学習モデルである`EfficientNetV2-S`と`arcface損失関数`を組み合わせることで、日本人の顔認証の精度を向上させることを目指しました。
 
@@ -48,7 +48,7 @@ ___
 
 そこで、日本人の顔データセット(2623ids, 271,875枚)を使用して新たな顔認識モデルを開発することにしました。データセットが小さいため、大規模な画像データセットである`ImageNet`で事前学習された`EfficientNetV2`をベースにファインチューニングを行いました。
 
-結果として、新たに開発した学習モデルは`26MB`と、既存のdlibモデル（`22.5MB`）よりわずかに大きいサイズとなりましたが、同等の計算リソースでより高精度な日本人の顔認証が可能となりました。また、今回は時間の制約上簡易的な検証ですが、学習データセットにない日本人に対し`98.9%`の精度を達成しました。特に`Dlib`の学習モデルが`False Positive (偽陽性)`を出しやすい`日本人`に対して、`False Positive`を`0`に抑えることができました。
+結果として新たに開発した学習モデルは`26MB`と、既存のdlibモデル（`22.5MB`）よりわずかに大きいサイズとなりましたが、同等の計算リソースでより高精度な日本人の顔認証が可能となりました。また、今回は時間の制約上簡易的な検証ですが、学習データセットにない日本人に対し`98.9%`の精度を達成しました。特に`Dlib`の学習モデルが`False Positive (偽陽性)`を出しやすい`日本人`に対して、`False Positive`を`0`に抑えることができました。
 
 今後の展望としては、`MobileFaceNets`を使用してゼロから学習することでモデルの軽量化を目指します。これによりさらに効率的な顔認証システムの開発を進めていく予定です。
 
@@ -319,7 +319,7 @@ exit()
 
 ## 結果と評価
 ### 評価用データセット
-LWFデータセットを用いて、既存のモデルと新たに開発したモデルの性能を比較してもよいのですが、LWFデータセットには日本人以外の顔画像がより多く含まれているため、今回の主旨にはあいません。そこで、日本人の顔画像を含むデータセットを用いて、既存のモデルと新たに開発したモデルの性能を比較することにします。この時、学習に用いたデータセットとは異なるデータセットを用いることで、モデルの汎化性能を評価することができます。
+LWFデータセットを用いて既存のモデルと新たに開発したモデルの性能を比較してもよいのですが、LWFデータセットには日本人以外の顔画像がより多く含まれているため今回の主旨にはあいません。そこで、日本人の顔画像を含むデータセットを用いて、既存のモデルと新たに開発したモデルの性能を比較することにします。この時、学習に用いたデータセットとは異なるデータセットを用いることで、モデルの汎化性能を評価することができます。
 
 本来であればそれ用にスクレイピングした日本人の顔画像を含むデータセットを作成し、日本人の顔認識の精度を評価しするところですが、ここでは時間の都合上、学習データセットにない20ids, 20枚の顔画像を用いて評価を行います。これらの全組み合わせは190組あります。この190組の顔画像のうち、同一人物の顔画像の組み合わせは20組あります。この20組の顔画像の組み合わせを同一人物と判断できるかどうか（その逆も）を評価します。
 ![](img/PASTE_IMAGE_2023-06-17-22-16-05.png)
@@ -336,7 +336,7 @@ import onnxruntime as ort
 import torchvision.transforms as transforms
 from PIL import Image
 
-model_name = 'model_169epoch_512dim.onnx'
+model_name = 'efficientnetv2_arcface.onnx'
 optimal_threshold = 0.4
 
 # 画像の前処理を定義
@@ -645,75 +645,75 @@ for i, j in pairs:
 ##### 実行結果
 - 新井浩文, 大森南朋
 - ![](img/PASTE_IMAGE_2023-06-17-22-28-51.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - `predict_test/新井浩文.png_align_resize.png, predict_test/大森南朋.png_align_resize.png, False, 87.98%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/新井浩文.png_align_resize.png, predict_test/大森南朋.png_align_resize.png, 98.97%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 新川優愛, 内田理央
 - ![](img/PASTE_IMAGE_2023-06-17-22-29-28.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - ` predict_test/新川優愛.png, predict_test/内田理央.png, False, 81.46%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/内田理央.png_align_resize.png, predict_test/新川優愛.png_align_resize.png, 99.27%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 金正恩, 馬場園梓
 - ![](img/PASTE_IMAGE_2023-06-17-22-30-12.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - `predict_test/金正恩.png_align_resize.png, predict_test/馬場園梓.png_align_resize.png, False, 79.87%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/金正恩.png_align_resize.png, predict_test/馬場園梓.png_align_resize.png, 99.44%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 池田清彦, 西村康稔
 - ![](img/PASTE_IMAGE_2023-06-17-22-30-39.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - `predict_test/池田清彦.png_align_resize.png, predict_test/西村康稔.png_align_resize.png, False, 72.26%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/池田清彦.png_align_resize.png, predict_test/西村康稔.png_align_resize.png, 98.87%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 金正恩, 畑岡奈紗
 - ![](img/PASTE_IMAGE_2023-06-17-22-31-12.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   `predict_test/金正恩.png_align_resize.png, predict_test/畑岡奈紗.png_align_resize.png, False, 77.82%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/金正恩.png_align_resize.png, predict_test/畑岡奈紗.png_align_resize.png, 99.37%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 有働由美子, 椎名林檎
 - ![](img/PASTE_IMAGE_2023-06-17-22-31-42.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - `predict_test/有働由美子.png_align_resize.png, predict_test/椎名林檎.png_align_resize.png, False, 82.17%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   -`predict_test/有働由美子.png_align_resize.png, predict_test/椎名林檎.png_align_resize.png, 99.16%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 波瑠, 入山杏奈
 - ![](img/PASTE_IMAGE_2023-06-17-22-32-17.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - `predict_test/波瑠.png_align_resize.png, predict_test/入山杏奈.png_align_resize.png, False, 81.46%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/波瑠.png_align_resize.png, predict_test/入山杏奈.png_align_resize.png, 99.07%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 - 浅田舞, 浅田真央
 - ![](img/PASTE_IMAGE_2023-06-17-22-32-38.png)
-- 新しい学習モデル (`model_169epoch_512dim.onnx`)
+- 新しい学習モデル (`efficientnetv2_arcface.onnx`)
   - `predict_test/浅田舞.png_align_resize.png, predict_test/浅田真央.png_align_resize.png, False, 83.06%`
-  - 判定; 別人 **(正解)**
+  - 判定; 別人 **(正解:o:)**
 - 既存の学習モデル (`dlib_face_recognition_resnet_model_v1.dat`)
   - `predict_test/浅田舞.png_align_resize.png, predict_test/浅田真央.png_align_resize.png, 99.27%`
-  - 判定: 同一人物 **(不正解)**
+  - 判定: 同一人物 **(不正解:x:)**
 ---
 
 ## まとめ
@@ -721,10 +721,6 @@ for i, j in pairs:
 この記事では日本人の顔認識の精度を向上させるために、`EfficientNetV2`と`ArcFace`を用いた新たなモデルの開発について説明しました。既存のモデルが抱える問題を解決するために日本人の顔データセットを使用し、大規模な画像データセットである`ImageNet`で事前学習された`EfficientNetV2`をベースにモデルをファインチューニングしました。また学習時の損失関数として`ArcFaceLoss`を使用し、特徴空間での顔の分離を改善しました。
 
 この新たなモデルは日本人の顔認識において、既存のモデル( `dlib_face_recognition_resnet_model_v1.dat`) よりも優れた性能を示しました。これにより顔認識技術がさらに多様なシチュエーションに対応できるようになり、その応用範囲が広がることが期待されます。
-
-
-
-
 
 
 # See also
