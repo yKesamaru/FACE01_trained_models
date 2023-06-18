@@ -46,7 +46,10 @@ ___
 
 [FACE01](https://github.com/yKesamaru/FACE01_SAMPLE) (顔認証システムを簡単に構築できるライブラリ) で採用している顔認識モデルの`dlib_face_recognition_resnet_model_v1.dat`は、`LFW` (Labeled Faces in the Wild) データセットにおいて99.38%の精度を達成しています。しかしこのモデルは白人に対する精度は高いものの、それ以外の人種、特に日本人に対する精度は低いという問題がありました。そのため、これまでは認識精度を向上させるためにしきい値を調整するなどの対策が必要でした。またしきい値を調整してもなお`False Positive (偽陽性)`が一定値存在する問題が残っていました。
 
-![Dlibが偽陽性を出す例](img/image845.png "Dlibが偽陽性を出す例")
+<div align="center">
+<img src="img/image845.png" alt="Dlibが偽陽性を出す例"><br />
+Dlibが偽陽性を出す例
+</div>
 
 そこで、日本人の顔データセット(2623ids, 271,875枚)を使用して新たな顔認識モデルを開発することにしました。データセットが小さいため、大規模な画像データセットである`ImageNet`で事前学習された`EfficientNetV2`をベースにファインチューニングを行いました。
 
