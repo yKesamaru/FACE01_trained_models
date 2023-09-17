@@ -28,6 +28,9 @@ ___
 - [`JAPANESE FACE v1`について](#japanese-face-v1について)
   - [一般日本人に対しての性能評価](#一般日本人に対しての性能評価-1)
   - [若年日本人女性に対しての性能評価](#若年日本人女性に対しての性能評価-1)
+  - [`F1-score`](#f1-score)
+    - [Dlib](#dlib)
+  - [`JAPANESE FACE v1`](#japanese-face-v1)
   - [使い方](#使い方)
   - [`dlib`学習モデルとの比較](#dlib学習モデルとの比較)
     - [`dlib_predict.py`](#dlib_predictpy)
@@ -101,6 +104,18 @@ Dlibの学習モデルと比較して、AUCが0.98であり、同等の性能を
 ## 若年日本人女性に対しての性能評価
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib_vs_japaneseFace_ROC.png)
 若年日本人女性の顔画像に対しては、DlibのAUCが0.94に対し、`JAPANESE FACE v1`は0.98を維持しています。
+
+
+## `F1-score`
+続いて`F1-score`を比較します。こちらは若年日本人女性のデータセットのみを比較します。
+### Dlib
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib%20F1score,%20etc..png)
+Dlibのブログでは「The network training started with randomly initialized weights and used a structured metric loss that tries to project all the identities into non-overlapping balls of radius 0.6.」と書いてあるとおり、閾値を0.6としています。しかし、若年日本人女性のデータセットを対象とした場合、0.35が最適な閾値ということが、グラフから分かります。
+この場合でも、F1-scoreは0.55程度の、あまり高い値とは言えない結果となりました。
+
+## `JAPANESE FACE v1`
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_JAPANESE%20FACE%20F1score.png)
+こちらのモデルでは、F1-scoreが0.8を超えています。これは、`JAPANESE FACE v1`が若年日本人女性のデータセットを用いて学習されているため、高い精度が出ていると考えられます。
 
 ## 使い方
 https://github.com/yKesamaru/FACE01_SAMPLE

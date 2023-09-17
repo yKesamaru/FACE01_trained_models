@@ -27,6 +27,9 @@ ___
 - [About `JAPANESE FACE v1`](#about-japanese-face-v1)
   - [Performance evaluation for general Japanese people](#performance-evaluation-for-general-japanese-people-1)
   - [Performance evaluation for young Japanese women](#performance-evaluation-for-young-japanese-women-1)
+  - [`F1-score`](#f1-score)
+    - [Dlib](#dlib)
+  - [`JAPANESE FACE v1`](#japanese-face-v1)
   - [How to use](#how-to-use)
   - [Comparison with `dlib` learning model](#comparison-with-dlib-learning-model)
     - [`dlib_predict.py`](#dlib_predictpy)
@@ -36,8 +39,6 @@ ___
 
 
 ## Introduction
-
-以下が英訳です。
 
 Facial recognition technology is used in every aspect of our lives, from unlocking smartphones to airport systems. 
 
@@ -78,14 +79,14 @@ In order to compare and evaluate the performance of these face learning models, 
 
 ### Performance evaluation for general Japanese people
 We randomly selected 300 images from a facial image database of famous Japanese people and created a facial image dataset of ordinary Japanese people. We performed face recognition on this dataset using `dlib_face_recognition_resnet_model_v1.dat` and calculated ROC-AUC. The result is below.
-![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/General Japanese.png)
-![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/General Japanese_dlib_ROC.png)
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/一般日本人.png)
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/一般日本人_dlib_ROC.png)
 For ordinary Japanese people, the AUC of `dlib_face_recognition_resnet_model_v1.dat` is 0.98, indicating very high accuracy.
 
 ### Performance evaluation for young Japanese women
 This time, we randomly selected 300 facial images of young Japanese women from a database of facial images of famous Japanese people, and created a dataset of facial images of young Japanese women. We performed face recognition on this dataset using `dlib_face_recognition_resnet_model_v1.dat` and calculated ROC-AUC. The result is below.
-![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/Young Japanese Woman.png)
-![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/Young Japanese Woman_dlib_ROC.png)
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性.png)
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib_ROC.png)
 When we evaluated the performance of ordinary Japanese people using facial images of young Japanese women, the AUC decreased from 0.98 to 0.94.
 This is probably due to the fact that Dlib's face learning model mainly uses the face scrub dataset and VGG dataset. These datasets contain almost no facial images of young Japanese women, so it is thought that the performance will be degraded for facial images of young Japanese women. (See [High Quality Face Recognition with Deep Metric Learning](http://blog.dlib.net/2017/02/high-quality-face-recognition-with-deep.html))
 
@@ -94,12 +95,25 @@ In order to solve this problem, `JAPANESE FACE v1` is a model trained using a un
 The results of comparing this model with the Dlib learning model are shown below.
 
 ## Performance evaluation for general Japanese people
-![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/General Japanese_dlib_vs_japaneseFace_ROC.png)
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/一般日本人_dlib_vs_japaneseFace_ROC.png)
 Compared to the Dlib learning model, the AUC is 0.98, showing comparable performance. Looking at the ROC curve, you can see that `JAPANESE FACE v1` has a higher performance than `dlib` as the upper left part is convex.
 
 ## Performance evaluation for young Japanese women
-![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/Young Japanese Woman_dlib_vs_japaneseFace_ROC.png)
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib_vs_japaneseFace_ROC.png)
 For face images of young Japanese women, Dlib's AUC is 0.94, while `JAPANESE FACE v1' maintains 0.98.
+
+
+## `F1-score`
+Next, compare the `F1-score`. Here we only compare datasets for young Japanese women.
+### Dlib
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib%20F1score,%20etc..png)
+
+As Dlib's blog says, "The network training started with randomly initialized weights and used a structured metric loss that tries to project all the identities into non-overlapping balls of radius 0.6," the threshold is set to 0.6. However, when targeting the dataset of young Japanese women, the graph shows that 0.35 is the optimal threshold.
+Even in this case, the F1-score was around 0.55, which is not a very high value.
+
+## `JAPANESE FACE v1`
+![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_JAPANESE%20FACE%20F1score.png)
+This model has an F1-score of over 0.8. This is thought to be because `JAPANESE FACE v1` is trained using a dataset of young Japanese women, resulting in high accuracy.
 
 ## How to use
 https://github.com/yKesamaru/FACE01_SAMPLE
@@ -115,7 +129,7 @@ $ python example/simple_efficientnetv2_arcface.py
 
 
 ## Comparison with `dlib` learning model
-[Example where all the people are judged to be the same person when using `dlib_face_recognition_resnet_model_v1.dat` (incorrect) ](https://tokai-kaoninsho.com/%e3%82%b3%e3%83%a9%e3% 83%a0/%e9%a1%94%e8%aa%8d%e8%a8%bc%e3%82%92%e4%bd%bf%e3%81%a3%e3%81%9f%e3%80 %8c%e9%a1%94%e3%81%8c%e4%bc%bc%e3%81%a6%e3%82%8b%e8%8a%b8%e8%83%bd%e4%ba%ba %e3%83%a9%e3%83%b3%e3%82%ad%e3%83%b3%e3%82%b0%e3%80%8d/) was verified using the newly created learning model. **In the new model, all were judged to be different people (correct answer)**.
+[Example where all the people are judged to be the same person when using `dlib_face_recognition_resnet_model_v1.dat` (incorrect) ](https://tokai-kaoninsho.com/%e3%82%b3%e3%83%a9%e3%83%a0/%e9%a1%94%e8%aa%8d%e8%a8%bc%e3%82%92%e4%bd%bf%e3%81%a3%e3%81%9f%e3%80%8c%e9%a1%94%e3%81%8c%e4%bc%bc%e3%81%a6%e3%82%8b%e8%8a%b8%e8%83%bd%e4%ba%ba%e3%83%a9%e3%83%b3%e3%82%ad%e3%83%b3%e3%82%b0%e3%80%8d/) was verified using the newly created learning model. **In the new model, all were judged to be different people (correct answer)**.
 ### `dlib_predict.py`
 ```python
 import glob
