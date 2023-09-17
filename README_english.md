@@ -72,6 +72,7 @@ This improved separation in the feature space and significantly increased the ac
 
 
 Visualization results using UMAP
+
 ![Visualization results using UMAP](img/umap.png)
 
 ## Performance evaluation of `dlib_face_recognition_resnet_model_v1.dat` and `JAPANESE FACE v1`
@@ -79,14 +80,20 @@ In order to compare and evaluate the performance of these face learning models, 
 
 ### Performance evaluation for general Japanese people
 We randomly selected 300 images from a facial image database of famous Japanese people and created a facial image dataset of ordinary Japanese people. We performed face recognition on this dataset using `dlib_face_recognition_resnet_model_v1.dat` and calculated ROC-AUC. The result is below.
+
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/一般日本人.png)
+
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/一般日本人_dlib_ROC.png)
+
 For ordinary Japanese people, the AUC of `dlib_face_recognition_resnet_model_v1.dat` is 0.98, indicating very high accuracy.
 
 ### Performance evaluation for young Japanese women
 This time, we randomly selected 300 facial images of young Japanese women from a database of facial images of famous Japanese people, and created a dataset of facial images of young Japanese women. We performed face recognition on this dataset using `dlib_face_recognition_resnet_model_v1.dat` and calculated ROC-AUC. The result is below.
+
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性.png)
+
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib_ROC.png)
+
 When we evaluated the performance of ordinary Japanese people using facial images of young Japanese women, the AUC decreased from 0.98 to 0.94.
 This is probably due to the fact that Dlib's face learning model mainly uses the face scrub dataset and VGG dataset. These datasets contain almost no facial images of young Japanese women, so it is thought that the performance will be degraded for facial images of young Japanese women. (See [High Quality Face Recognition with Deep Metric Learning](http://blog.dlib.net/2017/02/high-quality-face-recognition-with-deep.html))
 
@@ -96,10 +103,12 @@ The results of comparing this model with the Dlib learning model are shown below
 
 ## Performance evaluation for general Japanese people
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/一般日本人_dlib_vs_japaneseFace_ROC.png)
+
 Compared to the Dlib learning model, the AUC is 0.98, showing comparable performance. Looking at the ROC curve, you can see that `JAPANESE FACE v1` has a higher performance than `dlib` as the upper left part is convex.
 
 ## Performance evaluation for young Japanese women
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_dlib_vs_japaneseFace_ROC.png)
+
 For face images of young Japanese women, Dlib's AUC is 0.94, while `JAPANESE FACE v1' maintains 0.98.
 
 
@@ -113,6 +122,7 @@ Even in this case, the F1-score was around 0.55, which is not a very high value.
 
 ## `JAPANESE FACE v1`
 ![](https://raw.githubusercontent.com/yKesamaru/dlib_vs_japaneseFace/master/img/若年日本人女性_JAPANESE%20FACE%20F1score.png)
+
 This model has an F1-score of over 0.8. This is thought to be because `JAPANESE FACE v1` is trained using a dataset of young Japanese women, resulting in high accuracy.
 
 ## How to use
